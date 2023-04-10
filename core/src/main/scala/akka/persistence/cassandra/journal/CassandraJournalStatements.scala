@@ -280,7 +280,7 @@ import akka.persistence.cassandra.FutureDone
 
   def selectHighestSequenceNr =
     s"""
-     SELECT sequence_nr FROM $tableName WHERE
+     SELECT * FROM $tableName WHERE
        persistence_id = ? AND
        partition_nr = ?
        ORDER BY sequence_nr

@@ -7,7 +7,6 @@ package akka.persistence.cassandra.journal
 import java.lang.{ Long => JLong }
 import java.nio.ByteBuffer
 import java.util.{ UUID, HashMap => JHMap, Map => JMap }
-
 import akka.Done
 import akka.actor.SupervisorStrategy.Stop
 import akka.actor._
@@ -33,16 +32,18 @@ import com.datastax.oss.driver.api.core.uuid.Uuids
 import com.datastax.oss.protocol.internal.util.Bytes
 
 import scala.annotation.tailrec
-import scala.jdk.CollectionConverters._
 import scala.collection.immutable
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.util.control.NonFatal
 import scala.util.{ Failure, Success, Try }
-import scala.compat.java8.FutureConverters._
 import akka.annotation.DoNotInherit
 import akka.annotation.InternalStableApi
 import akka.stream.scaladsl.Source
+
+import scala.compat.java8.FutureConverters.CompletionStageOps
+import scala.concurrent.duration.Duration
+import scala.jdk.CollectionConverters.SetHasAsJava
 
 /**
  * INTERNAL API
@@ -671,6 +672,7 @@ import akka.stream.scaladsl.Source
       boundSelectHighestSequenceNr
         .flatMap(selectOne)
         .map { rowOption =>
+          println(Console.GREEN_B, rowOption.map(_.getLong("sequence_nr")), Console.RESET)
           rowOption.map(_.getLong("sequence_nr"))
         }
         .flatMap {
@@ -697,6 +699,20 @@ import akka.stream.scaladsl.Source
 
   private def selectOne[T <: Statement[T]](stmt: Statement[T]): Future[Option[Row]] = {
     session.selectOne(stmt.setExecutionProfileName(journalSettings.readProfile))
+  }
+
+  private def selectOne2[T <: Statement[T]](stmt: Statement[T]): Future[Option[Row]] = {
+    //session.selectOne(stmt.setExecutionProfileName(journalSettings.readProfile))
+
+    val s = Await.result(session.underlying(), Duration.Inf)
+
+    val rs = s.execute(stmt).one()
+
+    Future.successful(if (rs != null) {
+      Some(rs)
+    } else {
+      None
+    })
   }
 
   private def minSequenceNr(partitionNr: Long): Long =
