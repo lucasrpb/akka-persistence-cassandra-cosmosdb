@@ -22,7 +22,7 @@ import akka.persistence.cassandra.PluginSettings
 
   def selectAllPersistenceIds =
     s"""
-      SELECT persistence_id FROM $allPersistenceIdsTableName
+      SELECT * FROM $allPersistenceIdsTableName
      """
 
   def selectDistinctPersistenceIds =
@@ -42,7 +42,7 @@ import akka.persistence.cassandra.PluginSettings
 
   def selectTagSequenceNrs =
     s"""
-    SELECT persistence_id, tag_pid_sequence_nr, timestamp
+    SELECT *
     FROM $tagViewTableName WHERE
     tag_name = ? AND
     timebucket = ? AND

@@ -79,7 +79,7 @@ import akka.persistence.cassandra.FutureDone
     """
 
   def selectSnapshotMetadata(limit: Option[Int] = None) = s"""
-      SELECT persistence_id, sequence_nr, timestamp FROM ${tableName} WHERE
+      SELECT * FROM ${tableName} WHERE
         persistence_id = ? AND
         sequence_nr <= ? AND
         sequence_nr >= ?
@@ -87,14 +87,14 @@ import akka.persistence.cassandra.FutureDone
     """
 
   def selectLatestSnapshotMeta =
-    s"""SELECT persistence_id, sequence_nr, timestamp FROM ${tableName} WHERE
+    s"""SELECT * FROM ${tableName} WHERE
     persistence_id = ? 
     ORDER BY sequence_nr DESC
     LIMIT ?
     """
 
   def selectAllSnapshotMeta =
-    s"""SELECT sequence_nr, timestamp FROM ${tableName} WHERE
+    s"""SELECT * FROM ${tableName} WHERE
     persistence_id = ? 
     ORDER BY sequence_nr DESC
     """

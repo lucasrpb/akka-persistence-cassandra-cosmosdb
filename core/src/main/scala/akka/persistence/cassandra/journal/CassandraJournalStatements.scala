@@ -181,7 +181,7 @@ import akka.persistence.cassandra.FutureDone
   def truncateTagScanning: String =
     s"TRUNCATE $tagScanningTableName"
   def selectAllTagProgress: String =
-    s"""SELECT tag FROM $tagProgressTableName"""
+    s"""SELECT * FROM $tagProgressTableName"""
 
   def updateMessagePayloadInTagView =
     s"""
@@ -201,7 +201,7 @@ import akka.persistence.cassandra.FutureDone
 
   def selectTagPidSequenceNr =
     s"""
-       SELECT tag_pid_sequence_nr
+       SELECT *
        FROM $tagTableName WHERE
        tag_name = ? AND
        timebucket = ? AND
@@ -240,7 +240,7 @@ import akka.persistence.cassandra.FutureDone
 
   def selectTagScanningForPersistenceId =
     s"""
-       SELECT sequence_nr from $tagScanningTableName WHERE
+       SELECT * from $tagScanningTableName WHERE
        persistence_id = ?
      """
 
@@ -280,7 +280,7 @@ import akka.persistence.cassandra.FutureDone
 
   def selectHighestSequenceNr =
     s"""
-     SELECT sequence_nr FROM $tableName WHERE
+     SELECT * FROM $tableName WHERE
        persistence_id = ? AND
        partition_nr = ?
        ORDER BY sequence_nr
@@ -289,7 +289,7 @@ import akka.persistence.cassandra.FutureDone
 
   def selectDeletedTo =
     s"""
-      SELECT deleted_to FROM $metadataTableName WHERE
+      SELECT * FROM $metadataTableName WHERE
         persistence_id = ?
     """
 
